@@ -260,4 +260,13 @@ Si preguntamos la nota cuando la subimos, nos devuelve el 9
 Juanita sigue estando ahi, si pregutamos su nota nos va a seguir dando 8. Si queremos producit un cambio, no cambiamos los origianles
 si no que producimos nuevos en base a lo que queramos cambiar.  
 
+
+Podemos agregar el deriving(Show,Eq) para que sean mostrables y comparables
+
+-----------------------------
+
+Tuplas 
+
+Tipos de datos compuestos.  
+
 -}

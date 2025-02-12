@@ -1,7 +1,5 @@
 
 ----- Funciones Basicas 
-{-# OPTIONS_GHC -Wno-overlapping-patterns #-}
-
 esPar :: Int -> Bool
 esPar = even
 
@@ -48,6 +46,38 @@ baskara a b c
             | discriminante a b c >= 0 = (resolventeConSuma a b c, resolventeConResta a b c )
             | otherwise = error "No tiene raices reales"
 
+data Alumno = UnAlumno {
+    nombre :: String,
+    apellido :: String, 
+    legajo :: String,
+    nota :: Int,
+    edad :: Int 
+} deriving(Show,Eq)
 
 
+juanCruz = UnAlumno "Juan Cruz" "Rodriguez" "2140883" 7
+
+aprobo :: Alumno -> Bool
+aprobo =  (> 6) . nota
+
+mayorDeEdad :: Alumno -> Bool
+mayorDeEdad = (> 21) . edad 
+
+mayoresAprobados :: [Alumno] -> [Alumno]
+mayoresAprobados = filter mayorDeEdad . aprobados  
+
+aprobados :: [Alumno] -> [Alumno]
+aprobados = filter aprobo 
+
+sumaCuadrados :: [Int] -> Int 
+sumaCuadrados  = sum . map (^ 2)  
+
+filtrarYDuplicar :: [Int] -> [Int]
+filtrarYDuplicar = filter even . map (*2)
+
+longitudes :: [String] -> [Int]
+longitudes = filter (> 5). map length 
+
+iniciales :: [String] -> [Char]
+iniciales = map . take 1 
 

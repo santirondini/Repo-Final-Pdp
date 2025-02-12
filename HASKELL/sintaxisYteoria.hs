@@ -1,19 +1,4 @@
-
 {- 
-
------------------
-
-type NombreTipo = Tipo
-
-Ejemplos: 
-
-type Nombre = String
-type Edad = Int
-type Universo = [Personaje]
-type Gema = Personaje->Personaje
-
-Puedes ser datos como tambien listas y funciones 
-
 -----------------
 
 Declaraciones de personajes o de estructuras en base al data
@@ -98,7 +83,6 @@ Se podia hacer mas facil con
 
 f :: Int -> Bool
 f x = x > 0 
-
 
 -------------------------
 
@@ -267,6 +251,233 @@ Podemos agregar el deriving(Show,Eq) para que sean mostrables y comparables
 
 Tuplas 
 
-Tipos de datos compuestos.  
+Tipos de datos compuestos.
+
+Ejemplo con la función truncar:
+
+truncar :: Int -> String -> (String, Int)
+truncar cantidadDeCaracteres palabra = 
+    (take cantidadCaracteres palabra, length palabra - cantidad caracteres)
+
+> truncar 7 "paradigmas"
+("paradig",3) 
+
+(como queda la palabra , letras que faltan)
+
+Duplas: tipo de dato con dos componentes. Funciones de acceso
+
+fst (x,_) = x  ==> Retorna la primera compotente de la dulpa.  fst :: (a,b) -> a
+snd (_,y) = y  ==> Retorna la segunda compotente de la dulpa   snd :: (a,b) -> b
+
+Las tuplas son comparables por igualdad (Eq), se pueden mostrar (Show) y 
+son ordenables si alguna de sus componentes lo son (Ord), por ejemplo: 
+
+> (pepe,juana) > (lolo, santino) ==> esto da error
+
+Las tuplas no son numericas incluso si sus componentes lo son: 
+
+> (1,2) + (3,4) ==> ERROR
+
+Los data tienen tipos propios, dan mayor expresividad, hay mejor acceso
+y es mejor para modelar datos del dominio. 
+
+Las tuplas ya tienen tipos predefinidos y solo hay funciones predefinidas para las duplas. 
+
+------------------------------------------------
+
+Alias de tipo
+
+type NombreTipo = Tipo
+
+Ejemplos: 
+
+type Nombre = String
+type Edad = Int
+type Universo = [Personaje]
+type Gema = Personaje->Personaje
+
+Puedes ser datos como tambien listas y funciones. Aporta mas expresividad 
+
+------------------------------------------------
+
+Aplicación Parcial
+
+Las funciones pueden ser aplciadas con menos parametros de los que realmente espera.
+Si una función que espera una cantidad N de parametros, le aplicamos M valores / M < N, la estamos aplicando parcialmente
+Al aplicar parcialmente una función de N parametros con M valores, obtenemos otra función de N - M parametros. Los parametros
+se aplican en el orden que la función original los espera
+
+Ejemplos: 
+
+conjuncion :: Bool -> Bool -> Bool 
+truncar :: Int -> String -> (String, Int)
+
+> :t conjuncion True 
+conjuncion True :: Bool -> Bool 
+
+> :t truncar 4
+truncar 4 :: String -> (String, Int)
+
+Se crea una nueva función que recibe un parametro menos y devuelve el mismo tipo que la función original 
+
+Evaluar una función prefija de dos parametros de forma infija: 
+
+> 4 ´truncar´ "hola mundo"
+("hola",6)
+ 
+> :t (4 ´truncar´)
+String -> (String,Int)
+
+> :t (´truncar´ "hola")
+Int -> (String,Int)
+
+Otros ejemplos: 
+
+1) 
+
+(==) :: Eq a => a -> a -> Bool
+Si pasamos la función 
+
+> :t (== 'a')
+(== 'a') :: Char -> Bool 
+
+Nos da una función que espera un char y devuelve un booleano. Es una función 
+que dice si un caracter es igual o no a 'a'. 
+
+2) 
+
+(min) :: Ord a => a -> a -> a
+Si la pasamos como 
+
+> :t min "hola"
+min "hola" :: [Char] -> [Char]
+
+A partir de un string, evalua si ese string es menor a hola y devuelve ese u "hola" (dependiendo que dió el booleano)
+
+>(min "hola") "mickey"
+"hola"
+
+3) 
+
+(+) :: Num a => a -> a -> a 
+La pasamos como 
+
+> :t (+ 22)
+(+ 22) :: Num a => a -> a
+
+Es una función que espera un número y devuelve otro más 22. Espera un número para sumarle 22
+
+> (+ 22) 2
+24
+
+DEFINIR FUNCIONES EN TÉRMINOS DE OTRAS 
+
+esMayor :: Edad -> Bool
+esMayor = (>= 18)
+
+doble :: Num a => a -> a -> a
+doble = (2 *)
+
+alMenosCero :: (Num a, Ord a) => a -> a
+alMenosCero = max 0
+
+----------------------------------------
+
+Composición 
+
+Ejemplo de los pianos
+
+piano :: Midi -> Audio 
+bajarTono :: Midi -> Midi
+
+pianoMasGrave :: Midi -> Audio 
+pianoMasGrave = piano . bajarTono 
+
+Lo que sale de bajarTono, tiene que ser consistente con lo que entra en piano.
+
+> :t not . even 
+not . even :: Integral a => a -> Bool 
+
+Precedencia
+
+> :t not . even 7 
+ERROR 
+
+Esto falla porque "even 7" es falso (un valor), no es una función. No se pueden componer 
+con "not", que si es función. Se componen funciones con funciones, no funciones con valores. Se puede solucionar asi: 
+
+1) > (not . even) 7 
+True 
+
+2) > not . even $ 7 
+True 
+
+El operador ($) sirve para aplicar y tiene menor precedencia que el operador (.), por eso se puede hacer de esta forma 
+
+> (not . even . length) "paradigmas"
+False
+
+O tambien puede ser: 
+
+> not.even.length $ "hola"
+False
+
+Se lee de derecha a izquierda la composición 
+
+Con mas parametros 
+
+ajustarTono :: Int -> Midi -> Midi
+piano :: Midi -> Audio 
+
+pianoAjustable :: Int -> Midi -> Audio 
+pianoAjustable delta midi = piano . (ajustarTono delta midi)
+
+lo mismo que: 
+
+
+pianoAjustable :: Int -> Midi -> Audio 
+pianoAjustable delta midi = piano . ajustarTono delta 
+
+
+No se puede scar el delta ya que, si lo sacamos, nos queda la función ajustarTono de tipo Int -> Midi -> Midi. Cuando 
+la función piano es de Midi -> Audio (estaria recibiendo un parametro mas que es el Int). La función piano recibi un Midi
+y si nosotros no ponemos el delta para que remplace el Int del input, fallaría la composición. 
+Poniendo el delta, remplazamos el Int para que a la función piano le llegue unicamente el Midi 
+ 
+Aplicación de funciones compuestas con aplicación parcial 
+
+1)
+> :t take 3 . (++ "pdep")
+take 3 . (++ "pdep") :: Strings -> String 
+
+> take 3 . (++ "pdep") $ "wi"
+"wip"
+
+2)
+> :t (==0).(`mod` 2) 
+(==0).(`mod` 2) :: Integral a => a -> Bool 
+
+> (==0).(`mod` 2) $ 10
+True
+
+3)
+> even . (*3) . (+ 5) $ 2
+False 
+
+Tres formas distintas de escribir la misma función 
+
+f a b = ((+ a).(*2)) b
+
+f' a b = (+ a) . (*2) $ b
+
+f'' a = (+ a).(*2)
+
+Si el parametro aparece mas de una vez, no se va poder cancelar 
+
+g a = (a *).(+ a)
+
+h = max
+
+
 
 -}

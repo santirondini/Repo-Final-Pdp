@@ -1,21 +1,5 @@
+
 {- 
------------------
-
-Declaraciones de personajes o de estructuras en base al data
-
-ironman :: Personaje
-ironman = UnPersonaje 50 10 ["plata"] "tony" "tierra"
-
-hulk :: Personaje
-hulk = UnPersonaje 45 50 ["ponerse verde", "crecer 20 metros"] "bruce" "tierra"
-
-spiderman :: Personaje
-spiderman = UnPersonaje 20 25 ["sentido aracnido", "inteligencia", "tia may"] "peter" "tierra"
-
-mcu = [ironman, hulk, spiderman] / Lista de personajes
-
---------------------------
-
 Funciones 
 
 nombreFuncion :: VariableEntrada1 -> VariableEntrada2 -> ... -> VariableSalida
@@ -56,11 +40,9 @@ g x
     | x >= 3 && x <= 10 = 455
     | otherwise = 0
 
-El otherwise siempre se pone al final. Si no se cumplen ninguna 
-de las condicioens anteriores, entra ahi. Siempre da True. 
+El otherwise siempre se pone al final. Si no se cumplen ninguna de las condicioens anteriores, entra ahi. Siempre da True. 
 
-En las guardas tampoco se pueden mezclar los tipos. Todos los casos
-de guardas, inclusive el otherwise, deben devolver el mismo tipo. 
+En las guardas tampoco se pueden mezclar los tipos. Todos los casosde guardas, inclusive el otherwise, deben devolver el mismo tipo. 
 
 Restricción del dominio. No siempre se pone el othwerise:
 
@@ -478,6 +460,125 @@ g a = (a *).(+ a)
 
 h = max
 
+-----------------------------------
 
+Orden Superior 
 
+Ejemplo: Ordenar alfabeticamente alimentos o ordenarlos por cant de kcal. El algoritmo es el mismo pero 
+lo que cambia es el criterio. El criterio que se va a pasar por parametro no es un valor si no una función 
+
+> ordenarAlfabeticamente alimentos 
+> ordenarPorPrecio alimentos 
+> ordenarPorKcal alimentos 
+
+-----
+
+> ordenar nombre alimentos 
+> ordenar precio alimentos 
+> ordenar kcal alimentos 
+
+Las funciones son valores. Son "ciudadanos" de primer orden. Además de poder apliacrlas para 
+obtener un resultado, podemos apsarlos por parametro como cualquier otro valor. El orden superior nos 
+permite construir abstracciones mas genericas. No se repite logica y damos mas expresividad
+
+Expresiones lambda:
+
+(\parametros -> cuerpo de la función)
+Ej : (\ x y -> x + x*y)
+
+Tenemos un data las personas con el nombre y la edad. Queremos ver si su edad esta entre los 12 y 18
+
+Podemos hacer una ABSTRACCIÓN con estaEntre 
+estaEntre :: Ord a => a -> a -> a -> Bool
+estaEntre inferior superior valor = valor >= inferior && valor <= superior 
+
+Currificación
+
+En haskell todas las funciones esperan un parametro. Haskell lo que hace es intepretar todas las funciones 
+reciben un solo parametro y que, en algunos casos, retorna una función. 
+
+estaEntre' :: Ord a => a -> (a -> (a -> Bool))
+estaEntre' = (\inferior -> (\superior -> (\valor -> valor > inferior && valor <= superior)))
+
+Haskell interpreta lo mismo con o sin los parentesis cuando nos referimos a los tipos de las funciones 
+
+Funciones de Orden Superior
+
+Las funciones que reciben y/o retornan funciones son de orden superior. Ejemplos:
+
+> ($) dada una función y un valor, aplica el valor a la función
+$ :: (a -> b) -> a -> b 
+> (.) dada dos funciones y un valor, compone las funciones y aplica el valor
+(.) :: (b -> c) -> (a -> b) -> a -> c
+> flip invierte los valores de una función y un valor 
+flip :: (a -> b -> c) -> b -> a -> c
+flip f x y -> f y x 
+
+Ej: 
+flip elem [1,2,3] 3
+True 
+
+Puede ser una función que le des una función y te devuelva una que acepte los parametros invertidos
+
+Abstracciones genericas:
+
+1) El de mayor... 
+
+Edad
+Valor absoluto
+Cantidad de caracteres 
+
+Las tres funciones se pueden programar por separado, pero hay mucha logica repetida. Lo unico que 
+cambia es la función que se usa (length, abs, edad)
+
+elDeMayor :: Ord b => (a -> b) -> a -> a -> a
+elDeMayor poderacion x y 
+      | poderacion x > poderacion y = x
+      | otherwise = y 
+
+2) Hacer N veces algo
+
+> hacerNVeces
+hacerNVeces :: Int -> (a -> a) -> a -> a
+hacerNVeces 0 f valor = valor 
+hacerNVeces n f valor = hacerNVeces (n-1) f (f valor) 
+
+--------------------------------
+
+Listas 
+
+Modelar Conjuntos: armar una lista de compras, poder agregar alimentos, saber cosas para comprar y si hay 
+un alimento en la ista
+
+type Alias = String 
+
+agregarAlimento :: Alimento -> [Alimento] -> [Alimento]
+agregarAlimento alimento lista = alimento : lista
+
+cantidadDeAlimentos :: [Alimento] -> Int 
+cantidadDeAlimentos = length 
+
+yaEstaEnLaLista :: Alimento -> [Alimento] -> bool
+yaEstaEnLaLista = elem 
+
+Estructuras de listas: 
+
+- Vacia = []
+- Con al menos un elemento: que tiene una cabeza y una cola = (x:xs)
+
+["banana","manzana"] == "banana" : "manzana" : []
+
+El orden de los elementos es relevante, dos listas van a ser iguales si tienen los mismos elementos 
+en el mismo orden
+
+[1..5] == [1,2,3,4,5]
+
+Pattern Matching sobre listas
+
+Funciones de Acceso y Analisis Estructural
+
+- head : a partir de una lista, devuelve el primer elemento 
+- tail : " " devuelve toda la lista menos el primer elemento 
+
+Doble typeclass :: (Ord a, Ord b) => ...
 -}

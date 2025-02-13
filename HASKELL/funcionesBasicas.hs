@@ -48,12 +48,11 @@ baskara a b c
 
 data Alumno = UnAlumno {
     nombre :: String,
-    apellido :: String, 
+    apellido :: String,
     legajo :: String,
     nota :: Int,
-    edad :: Int 
+    edad :: Int
 } deriving(Show,Eq)
-
 
 juanCruz = UnAlumno "Juan Cruz" "Rodriguez" "2140883" 7
 
@@ -61,23 +60,47 @@ aprobo :: Alumno -> Bool
 aprobo =  (> 6) . nota
 
 mayorDeEdad :: Alumno -> Bool
-mayorDeEdad = (> 21) . edad 
+mayorDeEdad = (> 21) . edad
 
 mayoresAprobados :: [Alumno] -> [Alumno]
-mayoresAprobados = filter mayorDeEdad . aprobados  
+mayoresAprobados = filter mayorDeEdad . aprobados
 
 aprobados :: [Alumno] -> [Alumno]
-aprobados = filter aprobo 
+aprobados = filter aprobo
 
-sumaCuadrados :: [Int] -> Int 
-sumaCuadrados  = sum . map (^ 2)  
+sumaCuadrados :: [Int] -> Int
+sumaCuadrados  = sum . map (^ 2)
 
 filtrarYDuplicar :: [Int] -> [Int]
 filtrarYDuplicar = filter even . map (*2)
 
 longitudes :: [String] -> [Int]
-longitudes = filter (> 5). map length 
+longitudes = filter (> 5). map length
 
-iniciales :: [String] -> [Char]
-iniciales = map . take 1 
+iniciales :: [String] -> [[Char]]
+iniciales = map (take 1)
 
+existeEnLista :: [Int] -> Int  -> Bool
+existeEnLista = flip elem
+
+mayorString :: String -> String -> String
+mayorString s1 s2
+                | length s1 > length s2 = s1
+                | length s1 < length s2 = s2
+                | otherwise = error "Tienen el mismo tamaño flaco que carajo mandaste"
+
+elDeMayor :: Ord b => (a -> b) -> a -> a -> a
+elDeMayor poderacion x y
+      | poderacion x > poderacion y = x
+      | otherwise = y
+
+hacerNVeces :: Int -> (a -> a) -> a -> a
+hacerNVeces 0 f valor = valor 
+hacerNVeces n f valor = hacerNVeces (n-1) f (f valor) 
+
+
+f :: Ord a => a -> (a -> a) -> (c, [a]) -> Bool
+f h p = any (<h) . map p . snd 
+
+f' :: (Ord a, Ord b) => a -> (b -> a) -> (c, [b]) -> Bool
+f' h p = any (<h) . map p . snd 

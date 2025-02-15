@@ -1,4 +1,5 @@
 
+
 {- 
 Funciones 
 
@@ -581,4 +582,110 @@ Funciones de Acceso y Analisis Estructural
 - tail : " " devuelve toda la lista menos el primer elemento 
 
 Doble typeclass :: (Ord a, Ord b) => ...
+
+length :: [a] -> Int 
+length [] = 0
+length (_:xs) = 1 + length xs
+
+elem :: Eq a => a -> [a] -> Bool 
+elem valor [] = False
+elem valor (x:xs) =
+                    x == valor || elem valor xs
+
+Funciones más complejas 
+
+todosPares :: [Int] -> Bool 
+todosPares [] = True 
+todosPares (numero : numeros) = even numero && todosPares numeros 
+
+De aca sale la función all 
+
+all :: (a -> Bool) -> [a] -> Bool 
+all criterio [] = True 
+all criterio (x:xs) =
+                     criterio x && all criterio xs
+
+> any => si alguno cumple esa codición 
+> filter
+> map
+> all
+
+Todas estas son funciones de orden superior para listas 
+
+Declaratividad y Expresividad  
+
+Expresividad = que tan facil es entender una pieza de codigo. Puede ser renombrando las variables de
+una función para poder entender mejor que hacer ese codigo. Ejemplo del contador de numeros pares  
+
+Declaratividad = habla de la forma en la que es escriben los programas y que tanto se relacionan con
+el fin del programa en si. El ejemplo de los numeros pares en C++ y en haskell. La de haskell es mucho mas 
+declarativa 
+
+Aplicación del map para quedarnos con un tipo del data
+
+data InformacionNutricional = Info {
+    alimento :: String,
+    calorias :: Int, 
+    grasas :: Float,
+    carbo :: Float,
+    proteinas :: Float
+} deriving(Show,Eq)
+
+> sum: suma los elementos de una lista
+> maximum : maximo de todo tipo de listas con variables ordenables y foldeables
+
+- FOLD - REDUCCIÓN 
+
+foldl1 : foldea y pone como semilla al primer elemento de la lista 
+foldr1 : " " ultimo elemento de la lista 
+
+----------------------------------------------------------
+
+Estrategias de Evaluación y Listas infinitas 
+
+Concepto de reducción: remplazos que hace haskell para obtener el resultado final 
+
+Trasparencia referencial: 
+- Independientes
+- Deterministicas 
+- Sin efecto : puedo remplazar su invocación por su resultado 
+
+Contraejemplo de paresEncontrados en C
+
+De adentro hacia afuera => eager evaluation 
+De afuera hacia adentro => lazy evaluation => Haskell 
+
+Ejemplo con conjunción 
+
+> False && (factorial 1000000000000 > 0)
+False
+
+> even 2 || elem 0 [1..99999999999999999]
+True 
+
+En el primer ejemplo ni siquiera evalua el factorial, ya sabe que la conjunción con False siempre es False
+En el segundo caso igual. 
+
+Con una función ignorar x _ = x 
+
+> ignorar True (head [])
+True 
+
+head [] evaluada da error, pero como en este caso nos estamos quedando solamente con el primer parametro, haskell
+ni evalua el head [].
+
+Listas Infinitas
+
+enterosDesde :: Int -> [Int]
+enterosDesde x = x : enterosDesde (x + 1)
+
+> take 10 (enterosDesde 20)
+[20,21 ... , 29]
+
+Resuelve el take antes de quere completar la lista de enterosDesde 20. Mientras usemos una función
+que tenga sentido y pueda terminar, no dará ningun error para usarla en una lista infinita
+
+Los que podrian dar error con una lista infitnita de numeros primos pueden ser sum o encontrar un primo
+menor a 0.
+
 -}

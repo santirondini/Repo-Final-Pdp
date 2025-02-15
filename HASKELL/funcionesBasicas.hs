@@ -104,3 +104,65 @@ f h p = any (<h) . map p . snd
 
 f' :: (Ord a, Ord b) => a -> (b -> a) -> (c, [b]) -> Bool
 f' h p = any (<h) . map p . snd 
+
+---------------------------------
+
+type Alimento = String
+
+data InformacionNutricional = Info {
+    alimento :: Alimento,
+    calorias :: Int, 
+    grasas :: Float,
+    carbo :: Float,
+    proteinas :: Float
+} deriving(Show,Eq)
+
+pocoCalorico :: InformacionNutricional -> Bool
+pocoCalorico = (<= 100) . calorias
+
+alimentosPocoCaloricos :: [InformacionNutricional] -> [Alimento]
+alimentosPocoCaloricos = map alimento . filter pocoCalorico
+
+
+---- EJERCICIOS FOLD
+
+type Prenda = String
+type Nombre = String
+data Persona = UnaPersona {
+    nombreP :: Nombre,
+    apellidoP :: String,
+    edadP :: Int,
+    ropa :: [Prenda],
+    notaRecu :: Float
+} deriving(Show,Eq)
+
+santino = UnaPersona "santino" "rondini" 19 ["remera","pantalon","zapatillas"]
+
+oracionConPrendas :: Persona -> String
+oracionConPrendas = foldl1 (++) . ropa 
+
+data Aula = UnAula {
+    alumnos :: [Persona],
+    numero :: Int
+} deriving(Show,Eq)
+
+desaprobo :: Persona -> Bool
+desaprobo = (<6) . notaRecu
+
+mostrarDesaprobados :: Aula -> [Nombre]
+mostrarDesaprobados = map nombreP . filter desaprobo . alumnos   
+
+-- Listas Infinitas 
+
+-- show :: a -> String 
+
+saga :: String -> [String] 
+saga titulo = titulo : map (\numero -> titulo ++ " " ++ show numero ) [2 ..]
+
+avatar :: [String]
+avatar = cycle ["Tierra","Fuego","Aire","Agua"]
+
+enesimoAvatar :: Int -> String 
+enesimoAvatar n = avatar !! (n - 1)  
+
+

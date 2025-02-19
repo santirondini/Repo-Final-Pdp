@@ -211,8 +211,117 @@ mata(MasValiosa,MenosValiosa):-
     valeMas(MasValiosa,OtraCarta), 
     mata(OtraCarta,MenosValiosa).
 
-Pattern Matching : el vale mas. 
+Predicados Polimorficos 
 
+Polimorfismo: un predicado es polimorfico cuando trabajan con distintas formas de un posible argumento. 
+Pueden trabajar con multiples formas de algun predicado. Unica definición que trabaja con elementos variados.
+
+Ejemplo: 
+
+cumplioObjetivo(Jugador,Objetivo)
+objetivo(Jugador,Objetivo)
+
+cumplioObjetivo(Jugador, ocupar(Continente)):-
+    & .. logica .. &
+
+cumplioObjetivo(Jugador, destruirAl(Rival)):-
+    & .. logica .. &
+
+Son polimorficos ya que objetivo tiene 4 tipos; ocupar/1, desutrirAl/1 , ocupar3PaisesLimitrofesEntreSi y ocupar2PaisesDe/1
+
+-------------------------------
+CASOS DE NO INVERSIBILIDAD 
+
+> Hechos con variables
+> Comparación por distinto
+> <, >, >=, <=
+> is / 2
+> Negación 
+> Para todo 
+> Predicados que trabajan con listas
+> findall/3
+
+-------------------------------
+
+Listas
+
+Funciones: 
+
+?- length([pera,manzana,banana], Cantidad). 
+Cantidad = 3.
+
+> member(Elemento, lista) - Devuelve true si el elemento esta en la lista
+Es inversible, si consultamos el Elemento como varible, nos devuelve los elementos de la lista.
+
+> sum_list 
+> last 
+> nth1 = relaciona si un elemento esta en una determinada posición en base 1
+Ejemplo: 
+
+?- nth1 (2, [pera,banana,manzana],Alimento).
+Alimento = banana. 
+
+Manejo estructural de las listas: Length en Prolog
+
+length([],0).
+length([_|Cola],N):-
+    length(Cola, LongitudCola),
+    N is 1 + LongitudCola.  
+
+member(X, [X|_]).
+member(X, [_|Cola]):-
+    member(X,Cola).
+
+Son inversibles. Devuelven resultados si consultamos. 
+
+Juntar Respuestas => findall / 3
+
+findall(Atributo a juntra, Condición (con atributo), Nombre de la lista)
+
+findall => arma una lista por comprensión. 
+?- findall(Nota, nota(pepito,_,funcional, Nota), Notas).
+Notas = [2,9].
+
+?- findall(Nota, nota(Estudiante,_,funcional,Nota),Notas).
+Notas = [las notas de todos los estudiantes que rindieron algo de funcional]
+
+?- nota(Estudiante,_,_,_), findall(Nota, nota(Estudiante,_,funcional,Nota),Notas).
+Estudiante = pepito, Notas = [2,9] ;
+Estudiante = juanita, Notas = [9] ;
+Estudiante = tito, Notas = [2,6] ;
+
+Usar findall de forma responsable: 
+
+Buenos usos:
+1) cuantas respuestas tiene una determinada consulta
+2) armar una lista de numeros para hacer sumatoria 
+3) obtener una lista recolectando elementos de otro lado
+
+1 y 2 se lo llama problemas de agregación 
+
+Malos usos:
+1) hacer un findall y length > 0. Estas verificando existencia. Si exite al menos uno: ? - consulta(x)
+2) findall y length = 0. Verificando no existencia. ? - not(consulta(x))
+3) findall y member. Findall y member son operaciones inversas. Se resuelve haciendo una consulta individual
+o haciendo un forall. 
+
+Analizar consultas existenciales sin repetir: Querer saber limitrofes con China.
+
+?- Nos repite muchos paises, entonces si queremos contarlos, va a haber más de los reales.
+si hacemos un findall y sacamos su cantidad, nos da 14.
+
+> list_to_set => saca los elementos repetidos de una lista.
+
+Predicado para que no se repita la consulta existencial). 
+
+> distinct/1 => hacemos la consulta existencial adentro de este distinct. 
+
+Justificación de mayor declaratividad: 
+
+1) Al delegar la lógica de conteo en predicados auxiliares, tieneProblemasMejor/1 
+se enfoca solo en describir la condición que debe cumplirse.
+
+2) Lo puesto en 7-09-2022
 
 
 */

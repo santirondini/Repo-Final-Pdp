@@ -2902,3 +2902,5 @@
 {"level":"info","message":"⌛ Validating WOLLOK/07-39-2022.wlk","timeElapsed":125,"timestamp":"2025-02-20T20:38:10.973Z"}
 {"level":"info","message":"⌛ Validating WOLLOK/07-39-2022.wlk","timeElapsed":102,"timestamp":"2025-02-20T20:38:11.076Z"}
 {"level":"info","message":"⌛ Validating WOLLOK/07-39-2022.wlk","timeElapsed":102,"timestamp":"2025-02-20T20:38:11.363Z"}
+{"level":"info","message":"⌛ Building environment","timeElapsed":166,"timestamp":"2025-02-20T20:43:01.709Z"}
+{"level":"info","message":"⌛ Validating WOLLOK/sintaxisYteoria.wlk","timeElapsed":111,"timestamp":"2025-02-20T20:43:01.821Z"}

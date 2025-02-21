@@ -93,5 +93,44 @@ calleMasTransitada(Calle, Zona):-
 
 */
 
+% Base de conocimientos para practicar findall
+
+% Hechos sobre ciudades y sus habitantes
+viveEn(juan, buenosAires).
+viveEn(maria, cordoba).
+viveEn(pedro, rosario).
+viveEn(lucia, mendoza).
+viveEn(martin, buenosAires).
+viveEn(sofia, cordoba).
+viveEn(mateo, rosario).
+viveEn(caro, mendoza).
+
+% Hechos sobre ciudades y sus países
+ciudadEnPais(buenosAires, argentina).
+ciudadEnPais(cordoba, argentina).
+ciudadEnPais(rosario, argentina).
+ciudadEnPais(mendoza, argentina).
+ciudadEnPais(montevideo, uruguay).
+ciudadEnPais(santiago, chile).
+
+% Hechos sobre países y sus continentes
+paisEnContinente(argentina, americaDelSur).
+paisEnContinente(uruguay, americaDelSur).
+paisEnContinente(chile, americaDelSur).
+paisEnContinente(espana, europa).
+paisEnContinente(francia, europa).
+
+% Predicado que verifica si todas las personas viven en un país específico
+todasVivenEnPais(Pais) :-
+    forall(viveEn(Persona, Ciudad), (ciudadEnPais(Ciudad, Pais))).
+
+% Predicado que verifica si todas las ciudades de un país están en un continente específico
+todasCiudadesEnContinente(Continente) :-
+    forall(ciudadEnPais(Ciudad, Pais), (paisEnContinente(Pais, Continente))).
+
+% Predicado que verifica si todas las personas viven en un continente específico
+todasVivenEnContinente(Continente) :-
+    forall(viveEn(Persona, Ciudad), (ciudadEnPais(Ciudad, Pais), paisEnContinente(Pais, Continente))).
+
 
 
